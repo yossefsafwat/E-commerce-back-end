@@ -6,11 +6,7 @@ const otpValidationSchema = Joi.object({
     "any.required": "email is required",
   }),
 
-  otp: Joi.string()
-    .length(6)
-    .pattern(/^[0-9]+$/)
-    .required()
-    .messages({
+  otp: Joi.string().length(6).pattern(/^[0-9]+$/).required().messages({
       "string.length": "OTP must be exactly 6 digits",
       "string.pattern.base": "OTP must contain only numbers",
       "any.required": "OTP is required",

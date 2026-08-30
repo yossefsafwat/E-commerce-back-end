@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const otpValidationSchema = Joi.object({
-  email: Joi.string().email().required().trim().messages({
+  email: Joi.string().email().required().trim().lowercase().messages({
     "string.email": "please enter a valid email address",
     "any.required": "email is required",
   }),

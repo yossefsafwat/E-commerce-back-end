@@ -15,15 +15,6 @@ const otpValidationSchema = Joi.object({
       "string.pattern.base": "OTP must contain only numbers",
       "any.required": "OTP is required",
     }),
-
-  expiresAt: Joi.date().greater("now").required().messages({
-    "date.greater": "expiration time must be in the future",
-    "any.required": "expiration time is required",
-  }),
-
-  userData: Joi.object().default({}).optional().messages({
-    "object.base": "user data must be an object",
-  }),
 });
 
 export const verfiyOTP = async (req, res) => {

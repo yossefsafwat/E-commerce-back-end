@@ -3,6 +3,7 @@ import OTP from "./models/OTP.model.js";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import { verfiyOTP } from "./validation/user.validation.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,6 +17,7 @@ async function testOTP() {
     await mongoose.connect(MONGODB_URL);
     console.log("successfully connected to database\n");
 
+    //  test valid OTP
     const newOTP = await OTP.createOTP("yasmeen123@gamil.com", {
       username: "yasmeen_sharaf",
       email: "yasmeen123@gamil.com",
@@ -30,7 +32,7 @@ async function testOTP() {
       console.log("OTP Is Expired");
     }
 
-    //  Test Expired OTP
+    //  test expired OTP
     const expiredOTP = new OTP({
       email: "omar123@gmail.com",
       otp: OTP.generateOTP(),
@@ -42,12 +44,11 @@ async function testOTP() {
         phone: "+201234567890",
       },
     });
-    console.log(expiredOTP.otp)
     if (expiredOTP.isValid()) {
       await expiredOTP.save();
-      console.log("OTP valid ");
+      console.log("OTP is valid ");
     } else {
-      console.log("OTP Is Expired");
+      console.log("OTP is expired");
     }
   } catch (err) {
     console.log(`error in server ${err} `);

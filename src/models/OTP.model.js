@@ -48,7 +48,6 @@ OTPSchema.statics.createOTP = async function(email, userData, expiryMinutes = 5)
     expiresAt,
     userData
   });
-  console.log(otp)
   return otpDocument;
 };
 

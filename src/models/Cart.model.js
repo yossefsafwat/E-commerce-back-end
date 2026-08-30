@@ -80,7 +80,6 @@ const CartSchema = new mongoose.Schema(
       default: [],
       validate: {
         validator: function (items) {
-          // prevent duplicate products in cart :
           const productIds = items.map((item) => item.product.toString());
           return productIds.length === new Set(productIds).size;
         },
@@ -94,14 +93,12 @@ const CartSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    //when documents retrieved from the database mogodb are converted to json or object, the virtual fields appear in the output.
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   },
 );
 
-//virtual fields not stored in database :
-//1- subtotal virtual that calculates the total price of all Cart items.
+
 CartSchema.virtual("subtotal").get(function () {
   if (!this.items || this.items.length === 0) return 0;
 
@@ -110,7 +107,7 @@ CartSchema.virtual("subtotal").get(function () {
   }, 0);
 });
 
-//2-discountAmount virtual that calculates the saving produced by the coupon
+
 CartSchema.virtual("discountAmount").get(function () {
   if (!this.coupon || !this.coupon.code) return 0;
 
@@ -126,7 +123,7 @@ CartSchema.virtual("discountAmount").get(function () {
   }
 });
 
-//3- itemCount virtual that calculates the total number of units in the Cart.
+
 CartSchema.virtual("itemCount").get(function () {
   if (!this.items || this.items.length === 0) return 0;
 
@@ -135,7 +132,7 @@ CartSchema.virtual("itemCount").get(function () {
   }, 0);
 });
 
-//4-total virtual that calculates the Cart subtotal after the discount.
+
 CartSchema.virtual("total").get(function () {
   const subtotal = this.subtotal;
   const discount = this.discountAmount;

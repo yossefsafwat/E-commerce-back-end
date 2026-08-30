@@ -1,6 +1,5 @@
 import Joi from "joi";
 
-//send otp - register validation:
 const sendOTPRegisterValidation = Joi.object({
   username: Joi.string()
     .min(3)
@@ -41,7 +40,6 @@ const sendOTPRegisterValidation = Joi.object({
     }),
 });
 
-//verify otp - register validation:
 const verifyOTPRegisterValidation = Joi.object({
   email: Joi.string().email().required().trim().lowercase().messages({
     "string.email": "please enter a valid email address",
@@ -59,7 +57,6 @@ const verifyOTPRegisterValidation = Joi.object({
     }),
 });
 
-//send otp - forget password validation:
 const sendOTPForgetPassValidation = Joi.object({
   email: Joi.string().email().required().trim().lowercase().messages({
     "string.email": "please enter a valid email address",
@@ -67,7 +64,6 @@ const sendOTPForgetPassValidation = Joi.object({
   }),
 });
 
-//verify otp - forget password validation:
 const verifyOTPForgetPassValidation = Joi.object({
   email: Joi.string().email().required().trim().lowercase().messages({
     "string.email": "please enter a valid email address",
@@ -95,120 +91,9 @@ const verifyOTPForgetPassValidation = Joi.object({
     }),
 });
 
-// validate:
-export const sendOTPRegister = async (req, res) => {
-  try {
-    const { error } = sendOTPRegisterValidation.validate(req.body);
-
-    if (error) {
-      const allerrors = error.details.map((err) => ({
-        field: err.context.key,
-        message: err.message,
-      }));
-
-      return res.status(400).json({
-        success: false,
-        errors: allerrors,
-        message: "failed to send verification OTP. Please try again",
-      });
-    } else {
-      return res.status(200).json({
-        success: true,
-        message: "verification OTP sent successfully to your email",
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-export const verifyOTPRegister = async (req, res) => {
-  try {
-    const { error } = verifyOTPRegisterValidation.validate(req.body);
-
-    if (error) {
-      const allerrors = error.details.map((err) => ({
-        field: err.context.key,
-        message: err.message,
-      }));
-
-      return res.status(400).json({
-        success: false,
-        errors: allerrors,
-        message: "OTP verification failed. Please try again",
-      });
-    } else {
-      return res.status(200).json({
-        success: true,
-        message: "OTP verified successfully. Your account is now active",
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-export const sendOTPForgetPass = async (req, res) => {
-  try {
-    const { error } = sendOTPForgetPassValidation.validate(req.body);
-
-    if (error) {
-      const allerrors = error.details.map((err) => ({
-        field: err.context.key,
-        message: err.message,
-      }));
-
-      return res.status(400).json({
-        success: false,
-        errors: allerrors,
-        message: "failed to send password reset OTP. Please try again",
-      });
-    } else {
-      return res.status(200).json({
-        success: true,
-        message:
-          "OTP for password reset has been sent to your email successfully",
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-export const verifyOTPForgetPass = async (req, res) => {
-  try {
-    const { error } = verifyOTPForgetPassValidation.validate(req.body);
-
-    if (error) {
-      const allerrors = error.details.map((err) => ({
-        field: err.context.key,
-        message: err.message,
-      }));
-
-      return res.status(400).json({
-        success: false,
-        errors: allerrors,
-        message: "OTP verification for password reset failed",
-      });
-    } else {
-      return res.status(200).json({
-        success: true,
-        message: "OTP for password reset verified successfully",
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+export {
+  sendOTPRegisterValidation,
+  verifyOTPRegisterValidation,
+  sendOTPForgetPassValidation,
+  verifyOTPForgetPassValidation
+}

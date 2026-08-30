@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import OTP from "./models/OTP.model.js";
+import Cart from "./models/Cart.model.js";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -17,7 +18,6 @@ async function testOTP() {
     await mongoose.connect(MONGODB_URL);
     console.log("successfully connected to database\n");
 
-    //  test valid OTP
     const newOTP = await OTP.createOTP("yasmeen123@gamil.com", {
       username: "yasmeen_sharaf",
       email: "yasmeen123@gamil.com",
@@ -32,7 +32,6 @@ async function testOTP() {
       console.log("OTP Is Expired");
     }
 
-    //  test expired OTP
     const expiredOTP = new OTP({
       email: "omar123@gmail.com",
       otp: OTP.generateOTP(),
@@ -50,6 +49,41 @@ async function testOTP() {
     } else {
       console.log("OTP is expired");
     }
+
+
+    const cartUser =  await new Cart({
+  user: new mongoose.Types.ObjectId(),
+  items: [
+    {
+      product: new mongoose.Types.ObjectId(),
+      name: "iPhone 15 Pro",
+      image: "https://example.com/iphone15.jpg",
+      price: 999,
+      quantity: 2
+    },
+    {
+      product: new mongoose.Types.ObjectId(),
+      name: "Samsung Galaxy S24",
+      image: "https://example.com/galaxy_s24.jpg",
+      price: 899,
+      quantity: 1
+    }
+  ],
+  coupon: {
+    code: "SAVE10",
+    discountType: "percentage",
+    discountValue: 10
+  }
+});
+await cartUser.save()
+
+
+
+
+
+
+
+
   } catch (err) {
     console.log(`error in server ${err} `);
   } finally {

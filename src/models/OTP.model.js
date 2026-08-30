@@ -33,15 +33,14 @@ const OTPSchema = new mongoose.Schema(
   },
 );
 
-// index for auto deletion of expired OTP
 OTPSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-// generate OTP
+
 OTPSchema.statics.generateOTP = function () {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-//create OTP with user data
+
 OTPSchema.statics.createOTP = async function (
   email,
   userData,
@@ -59,12 +58,11 @@ OTPSchema.statics.createOTP = async function (
   return otpDocument;
 };
 
-// isvalid otp expireAt
 OTPSchema.methods.isValid = function () {
   return this.expiresAt > new Date();
 };
 
-// compare OTP
+
 OTPSchema.methods.compareOTP = async function (OTPUser) {
   try {
     return await bcryptjs.compare(OTPUser, this.otp);
@@ -73,7 +71,7 @@ OTPSchema.methods.compareOTP = async function (OTPUser) {
   }
 };
 
-// pre-save middleware to hash OTP
+
 OTPSchema.pre("save", async function () {
   if (!this.isModified("otp")) {
     return;

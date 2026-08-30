@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-import bcryptjs from "bcryptjs";
-import validator from "validator";
 
 const CartItemSchema = new mongoose.Schema(
   {
@@ -83,7 +81,7 @@ const CartSchema = new mongoose.Schema(
       validate: {
         validator: function (items) {
           // prevent duplicate products in cart :
-          const productIds = items.map((item) => item.product.toSting());
+          const productIds = items.map((item) => item.product.toString());
           return productIds.length === new Set(productIds).size;
         },
         message: "duplicate products are not allowed in the cart",

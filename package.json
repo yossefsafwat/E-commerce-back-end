@@ -1,7 +1,7 @@
 {
   "name": "Koda-Ecommerce-Store",
   "version": "1.0.0",
-   "type": "module",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -13,8 +13,8 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "joi": "^18.2.6",
     "mongodb": "^7.6.0",
     "mongoose": "^9.9.4"
   }
 }
-

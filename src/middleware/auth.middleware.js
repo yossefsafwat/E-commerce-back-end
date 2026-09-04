@@ -19,7 +19,7 @@ const authentication = async (req, res, next) => {
   if (!authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       success: false,
-      message: "Invalid token format. Use 'Bearer <token>'",
+      message: "invalid token format. Use 'Bearer <token>'",
     });
   }
   const token = authHeader.replace("Bearer ", "");
@@ -38,14 +38,12 @@ const authentication = async (req, res, next) => {
         message: `id user ${payload._id} not found in database`,
       });
     }
-    req.session.token = token;
-    req.session.user = user;
-    req.session.role = payload.role;
-    req.session._id = payload._id;
+    req.user = user;
+    req.role = payload.role;
+    req._id = payload._id;
     next();
   } catch (error) {
     let message;
-
     if (error.name === "JsonWebTokenError") {
       message = "invalid token. please login again.";
     } else if (error.name === "TokenExpiredError") {
@@ -62,13 +60,13 @@ const authentication = async (req, res, next) => {
 
 const restrictTo = (...roles) => {
   return function (req, res, next) {
-    if (!req.session.user) {
+    if (!req.user) {
       return res.status(401).json({
         success: false,
         message: "you must login first.",
       });
     }
-    if (!roles.includes(req.session.role)) {
+    if (!roles.includes(req.role)) {
       return res.status(403).json({
         success: false,
         message: "you're not authorized to access this resource.",

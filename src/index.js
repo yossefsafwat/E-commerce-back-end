@@ -18,7 +18,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
-dns.set("trust proxy", 1);
+app.set("trust proxy", 1);
 
 app.use(express.json());
 app.use(cookieParser());

@@ -4,7 +4,7 @@ import {
   sendOTPForgetPassValidation,
   verifyOTPForgetPassValidation,
 } from "../validation/otp.validation.js";
-import {loginValidation} from "../validation/user.validation.js"
+import {loginValidation} from "../validation/user.loginvalidation.js"
 
 
 function sendOTPRegister(req, res, next) {

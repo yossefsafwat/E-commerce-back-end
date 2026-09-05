@@ -19,7 +19,7 @@ const login = async (req, res) => {
         message: `you must send all fields are required`,
       });
 
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email }).select("+password");
     if (!user)
       return res.status(404).json({
         success: false,
@@ -39,12 +39,22 @@ const login = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRE },
     );
 
-    res.status(200).json({
-      success: true,
-      message: "Login successfully",
-      token,
-      user,
-    });
+res.status(200).json({
+  success: true,
+  message: "Login successfully",
+  token,
+  user: {
+    _id: user._id,
+    username: user.username,
+    email: user.email,
+    phone: user.phone,
+    avatar: user.avatar,
+    role: user.role,
+    wishlist: user.wishlist,
+    isVerified: user.isVerified,
+    addresses: user.addresses,
+  },
+});
   } catch (error) {
     res.status(500).json({
       success: false,

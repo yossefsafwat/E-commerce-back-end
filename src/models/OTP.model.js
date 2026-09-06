@@ -55,6 +55,7 @@ OTPSchema.statics.createOTP = async function (
     expiresAt,
     userData,
   });
+  await otpDocument.save();
   return otpDocument;
 };
 

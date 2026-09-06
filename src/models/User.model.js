@@ -65,12 +65,7 @@ const userSchema = new mongoose.Schema(
       default: "customer",
     },
     addresses: [addressSchema],
-    wishlist: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-      },
-    ],
+
     isVerified: {
       type: Boolean,
       default: false,

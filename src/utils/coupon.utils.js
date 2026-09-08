@@ -30,35 +30,3 @@ export const AVAILABLE_COUPONS = {
     description: "50 EGP off the subtotal",
   },
 };
-
-// التحقق من صحة الكوبون
-export function validateCoupon(code) {
-  const coupon = AVAILABLE_COUPONS[code];
-  if (!coupon) {
-    return {
-      valid: false,
-      message: "Invalid coupon code",
-    };
-  }
-  return {
-    valid: true,
-    coupon,
-  };
-}
-
-// حساب قيمة الخصم
-export function calculateDiscount(coupon, subtotal) {
-  if (!coupon) return 0;
-
-  if (coupon.type === "percentage") {
-    return (subtotal * coupon.value) / 100;
-  } else if (coupon.type === "fixed") {
-    return Math.min(coupon.value, subtotal);
-  }
-  return 0;
-}
-
-// الحصول على كوبون بالكود
-export function getCouponByCode(code) {
-  return AVAILABLE_COUPONS[code] || null;
-}

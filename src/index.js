@@ -7,6 +7,8 @@ import authRouter from "./routes/auth.routes.js";
 import dns from "dns";
 import path from "path";
 import { fileURLToPath } from "url";
+import productsRouter from "./routes/productRoutes.js"
+import reviewRouter from "./routes/review.route.js"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,6 +28,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 app.use("/auth", authRouter);
+app.use("/products", productsRouter)
+app.use("/products",reviewRouter)
 
 connectDB();
 

@@ -4,9 +4,11 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import connectDB from "./db/connection.js";
 import authRouter from "./routes/auth.routes.js";
+import cartRouter from "./routes/cart.routes.js"
 import dns from "dns";
 import path from "path";
 import { fileURLToPath } from "url";
+import orderRouter from "./routes/order.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,6 +28,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 app.use("/auth", authRouter);
+app.use("/carts",cartRouter)
+app.use("/orders", orderRouter)
 
 connectDB();
 

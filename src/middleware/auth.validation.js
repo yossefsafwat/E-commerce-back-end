@@ -4,8 +4,7 @@ import {
   sendOTPForgetPassValidation,
   verifyOTPForgetPassValidation,
 } from "../validation/otp.validation.js";
-import {loginValidation} from "../validation/user.loginvalidation.js"
-
+import { loginValidation } from "../validation/user.loginvalidation.js";
 
 function sendOTPRegister(req, res, next) {
   try {
@@ -117,7 +116,7 @@ function verfiylogin(req, res, next) {
 
       return res.status(400).json({
         success: false,
-       message: "validation failed: invalid login credentials",
+        message: "validation failed: invalid login credentials",
         errors: allErrors,
       });
     }
@@ -135,5 +134,5 @@ export {
   verifyOTPRegister,
   sendOTPForgetPass,
   verifyOTPForgetPass,
-  verfiylogin
+  verfiylogin,
 };

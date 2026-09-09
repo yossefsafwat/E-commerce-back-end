@@ -48,6 +48,7 @@ import {
   login,
   logout,
   profile,
+   verifyRegisterOTP,
 } from "../controllers/auth.controllers.js";
 
 import {
@@ -61,6 +62,8 @@ import {
 const authRouter = express.Router();
 
 authRouter.route("/register/send-otp").post(sendOTPRegister, register);
+
+authRouter.route("/register/verify-otp").post(verifyOTPRegister, verifyRegisterOTP);
 
 authRouter.route("/login").post(verfiylogin, login);
 

@@ -388,7 +388,6 @@ const updateOrderStatus = async (req, res) => {
       order.paidAt = new Date();
     }
 
-    await order.save();
 
     const { success } = await sendEmail(
       order.user.email,
@@ -407,6 +406,7 @@ const updateOrderStatus = async (req, res) => {
     );
 
     if (success) {
+       await order.save();
       return res.status(200).json({
         success: true,
         message: `order status updated to ${status} successfully and send email`,

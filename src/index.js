@@ -5,6 +5,7 @@ import morgan from "morgan";
 import connectDB from "./db/connection.js";
 import authRouter from "./routes/auth.routes.js";
 import cartRouter from "./routes/cart.routes.js"
+import adminRouter from "./routes/admin.routes.js"
 import dns from "dns";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -30,6 +31,7 @@ app.use(morgan("dev"));
 app.use("/auth", authRouter);
 app.use("/carts",cartRouter)
 app.use("/orders", orderRouter)
+app.use("/admin",adminRouter)
 
 connectDB();
 

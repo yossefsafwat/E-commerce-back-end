@@ -117,9 +117,6 @@ const createOrder = async (req, res) => {
           message: "failed to send order confirmation",
       });
     }
-
-    
-
   } catch (error) {
     await session.abortTransaction()
     session.endSession()

@@ -1,6 +1,6 @@
 import Joi from 'joi'
 
-export const createOrderValidation = Joi.object({
+ const createOrderValidation = Joi.object({
   shippingAddress: Joi.object({
     fullName: Joi.string().trim().required(),
     phone: Joi.string().trim().required(),
@@ -16,3 +16,13 @@ export const createOrderValidation = Joi.object({
 
   customerNote: Joi.string().max(1000).allow('', null),
 })
+
+ const updateOrderStatusValidation = Joi.object({
+  status:Joi.string().trim().required().valid('pending', 'confirmed', 'processing', 'shipped','delivered','cancelled','returned')
+    .default('pending'),
+  adminNote:Joi.string().max(1000).allow('', null),
+})
+
+export {createOrderValidation,updateOrderStatusValidation}
+
+

@@ -77,10 +77,15 @@ const addItemToCart = async (req, res) => {
     const existItem = cart.items.find(
       (item) => item.product.toString() === productId,
     );
-    // let newQuantity = quantity;
+    let newQuantity = quantity;
     if (existItem) {
-     let newQuantity = existItem.quantity + quantity;
-      
+      newQuantity = existItem.quantity + quantity;
+      if (product.stock < newQuantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Insufficient stock to product ${product.name}`,
+        });
+      }
       cart.items = cart.items.map((item) =>
         item.product.toString() === productId
           ? { ...item, quantity: newQuantity }
@@ -95,9 +100,6 @@ const addItemToCart = async (req, res) => {
         quantity: quantity,
       });
     }
-    await Product.findByIdAndUpdate(productId, {
-      $inc: { stock: -quantity },
-    });
     await cart.save();
     res.status(200).json({
       success: true,

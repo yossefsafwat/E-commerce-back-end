@@ -5,7 +5,8 @@ import {
   verifyOTPForgetPassValidation,
 } from "../validation/otp.validation.js";
 import { loginValidation } from "../validation/user.loginvalidation.js";
-
+import { changePasswordSchema } from "../validation/user.updatevalidation.js";
+import { adminAddUserSchema } from "../validation/admin.user.validation.js";
 function sendOTPRegister(req, res, next) {
   try {
     let { error } = sendOTPRegisterValidation.validate(req.body);
@@ -128,6 +129,57 @@ function verfiylogin(req, res, next) {
     });
   }
 }
+function validateChangePassword(req, res, next) {
+  try {
+    const { error } = changePasswordSchema.validate(req.body);
+
+    if (error) {
+      const allErrors = error.details.map((err) => ({
+        field: err.context.key,
+        message: err.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed: invalid password data",
+        errors: allErrors,
+      });
+    }
+
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: `Internal server error while validating password data: ${error.message}`,
+    });
+  }
+}
+
+function validateAdminAddUser(req, res, next) {
+  try {
+    const { error } = adminAddUserSchema.validate(req.body);
+
+    if (error) {
+      const allErrors = error.details.map((err) => ({
+        field: err.context.key,
+        message: err.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed: invalid user data",
+        errors: allErrors,
+      });
+    }
+
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: `Internal server error while validating user data: ${error.message}`,
+    });
+  }
+}
 
 export {
   sendOTPRegister,
@@ -135,4 +187,14 @@ export {
   sendOTPForgetPass,
   verifyOTPForgetPass,
   verfiylogin,
+  validateChangePassword,
+  validateAdminAddUser,
 };
+
+// export {
+//   sendOTPRegister,
+//   verifyOTPRegister,
+//   sendOTPForgetPass,
+//   verifyOTPForgetPass,
+//   verfiylogin,
+// };

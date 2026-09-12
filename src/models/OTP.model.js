@@ -46,6 +46,7 @@ OTPSchema.statics.createOTP = async function (
   userData,
   expiryMinutes = 5,
 ) {
+  await this.deleteMany({ email });
   const otp = this.generateOTP();
   const expiresAt = new Date(Date.now() + expiryMinutes * 60 * 1000);
 
@@ -68,7 +69,7 @@ OTPSchema.methods.compareOTP = async function (OTPUser) {
   try {
     return await bcryptjs.compare(OTPUser, this.otp);
   } catch (error) {
-    throw new Error(`error comparing OTP: ${error}`);
+    throw new Error(`error comparing OTP: ${error.message}`);
   }
 };
 
@@ -82,7 +83,7 @@ OTPSchema.pre("save", async function () {
     const salt = await bcryptjs.genSalt(10);
     this.otp = await bcryptjs.hash(this.otp, salt);
   } catch (error) {
-    throw new Error(`error hashing OTP: ${error}`);
+    throw new Error(`error hashing OTP: ${error.message}`);
   }
 });
 

@@ -10,6 +10,12 @@ import dns from "dns";
 import path from "path";
 import { fileURLToPath } from "url";
 import orderRouter from "./routes/order.routes.js";
+import adminUserRouter from "./routes/admin.user.routes.js";
+import userRouter from "./routes/user.routes.js";
+import productsRouter from "./routes/product.routes.js"
+import reviewRouter from "./routes/review.routes.js"
+import wishlistRoutes from "./routes/wishlist.routes.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,7 +37,12 @@ app.use(morgan("dev"));
 app.use("/auth", authRouter);
 app.use("/carts",cartRouter)
 app.use("/orders", orderRouter)
+app.use("/products", productsRouter)
+app.use("/products",reviewRouter)
+app.use("/admin/users", adminUserRouter);
 app.use("/admin",adminRouter)
+app.use("/wishlists", wishlistRoutes);
+app.use("/users", userRouter);
 
 connectDB();
 

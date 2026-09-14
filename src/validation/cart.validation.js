@@ -22,8 +22,8 @@ const updateItemQuantityValidation = Joi.object({
       "string.pattern.base": "invalid product id",
       "any.required": "product id is required",
     }),
-  quantity: Joi.number().integer().min(0).required().messages({
-    "number.min": "quantity must be at least 0",
+  quantity: Joi.number().integer().min(1).required().messages({
+    "number.min": "quantity must be at least 1",
     "any.required": "quantity is required",
   }),
 });

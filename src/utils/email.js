@@ -37,6 +37,7 @@ const formatDate = (date) => {
 const buildEmail = (templateName, data) => {
   const templatePath = path.join(
     process.cwd(),
+    "src",
     "templates",
     templateName,
   );

@@ -3,6 +3,7 @@ import User from "../models/User.model.js";
 import Cart from "../models/Cart.model.js";
 import mongoose from "mongoose";
 import { sendEmail, formatDate } from "../utils/email.js";
+import Wishlist from "../models/Wishlist.model.js";
 
 const getDashboardStats = async (req, res) => {
   try {
@@ -238,7 +239,7 @@ const getActiveCarts = async (req, res) => {
       .populate("user", "username email ")
       .sort({ updatedAt: -1 })
       .skip(skip)
-      .limit(limit)
+      .limit(limit);
 
     const formattedCarts = carts.map((cart) => ({
       _id: cart._id,
@@ -249,8 +250,7 @@ const getActiveCarts = async (req, res) => {
       items: cart.items,
       subtotal: cart.subtotal,
       itemCount: cart.itemCount,
-    }
-  ));
+    }));
     res.status(200).json({
       success: true,
       total,
@@ -327,7 +327,7 @@ const getSingleOrder = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        message: "invalid order id format",
+        message: "invalid order id format ",
       });
     }
 
@@ -341,8 +341,8 @@ const getSingleOrder = async (req, res) => {
         message: "order not found",
       });
     }
-    if(!order.adminNote){
-      order.adminNote=''
+    if (!order.adminNote) {
+      order.adminNote = "";
     }
     res.status(200).json({
       success: true,
@@ -364,10 +364,13 @@ const updateOrderStatus = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        message: "invalid order id format",
+        message: "invalid order id format ",
       });
     }
-    const order = await Order.findById(id).populate("user", "username email phone avatar")
+    const order = await Order.findById(id).populate(
+      "user",
+      "username email phone avatar",
+    );
     if (!order) {
       return res.status(404).json({
         success: false,
@@ -388,7 +391,6 @@ const updateOrderStatus = async (req, res) => {
       order.paidAt = new Date();
     }
 
-
     const { success } = await sendEmail(
       order.user.email,
       `Order Status Update #${order._id}`,
@@ -398,15 +400,14 @@ const updateOrderStatus = async (req, res) => {
         customerName: order.shippingAddress.fullName,
         status: order.status,
         orderDate: formatDate(Date.now()),
-        items: order.items.map(item=>item.toObject()),
+        items: order.items.map((item) => item.toObject()),
         totalPrice: order.totalPrice,
         adminNote: order.adminNote,
         year: new Date().getFullYear(),
       },
     );
-
     if (success) {
-       await order.save();
+      await order.save();
       return res.status(200).json({
         success: true,
         message: `order status updated to ${status} successfully and send email`,
@@ -426,10 +427,108 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
+const getAllWishlists = async (req, res) => {
+  try {
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.max(parseInt(req.query.limit) || 10, 1);
+    const skip = (page - 1) * limit;
+
+    let [wishlists, total] = await Promise.all([
+      Wishlist.find()
+        .populate("user", "username email avatar")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Wishlist.countDocuments(),
+    ]);
+
+    wishlists = wishlists.map((wishlist) => {
+      wishlist.products.map((product) => {
+        product.reviews.map((review) => {
+          review.username = wishlist.user.username;
+        });
+      });
+      return wishlist;
+    });
+
+    res.status(200).json({
+      success: true,
+      total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      wishlists,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `get on all user wishlists error: ${error.message}`,
+    });
+  }
+};
+
+const getWishlistStats = async (req, res, next) => {
+  try {
+    const totalWishlists = await Wishlist.countDocuments();
+
+    const totalAgg = await Wishlist.aggregate([
+      { $project: { count: { $size: "$products" } } },
+      { $group: { _id: null, total: { $sum: "$count" } } },
+    ]);
+    const totalWishlistProducts = totalAgg[0]?.total || 0;
+
+    const topProducts = await Wishlist.aggregate([
+      { $unwind: "$products" },
+      {
+        $group: {
+          _id: "$products",
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { count: -1, _id: 1 } },
+      { $limit: 10 },
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      { $unwind: "$product" },
+      {
+        $project: {
+          _id: 1,
+          productId: "$_id",
+          count: 1,
+          name: "$product.name",
+          image: { $arrayElemAt: ["$product.images.url", 0] },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      statistics: {
+        totalWishlists,
+        totalWishlistProducts,
+        topProducts,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `get on wishlist statistics error: ${error.message}`,
+    });
+  }
+};
+
 export {
   getDashboardStats,
   getActiveCarts,
   getAllOrders,
   getSingleOrder,
   updateOrderStatus,
+  getAllWishlists,
+  getWishlistStats,
 };

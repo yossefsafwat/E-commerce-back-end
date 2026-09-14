@@ -122,7 +122,7 @@ export const createProduct = async (req, res) => {
    (req.files||[]).map(async(file)=>{
   const result=await uploadToCloudinary(file.buffer)
   return{
-    public_id:result.public_id,
+    public_id:`ecommerce-products/${result.public_id}`,
     url:result.secure_url
   }
   })

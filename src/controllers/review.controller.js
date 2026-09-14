@@ -1,4 +1,104 @@
-// Dev6-----begin review endpoints
+import Product from "../models/Product.model.js"
+// ADD REVIEW
 export const addReview=async(req,res)=>{
-    // week3---add review logic
+try{
+const {productId}=req.params
+const{comment,rating}=req.body
+const product=await Product.findById(productId)
+if(!product){
+    res.status(404).send({
+        message:"product not found"
+    })
+}
+// prevend duplicated review
+const duplicatedReview= product.reviews.find((review)=>{
+         return review.user.toString()===req.user._id.toString()
+       })
+       if(duplicatedReview){
+        return res.status(400).send({
+            message:"you already add review for this product"
+        })
+       }
+product.reviews.push({
+    user:req.user._id,
+    comment,
+    rating
+})
+ 
+product.calcAverageRating()
+
+
+await product.save()
+res.status(200).send({
+    message:"review added successfully"
+})
+}
+catch(error){
+    res.status(500).send({
+        message:error.message
+    })
+}
+}
+// get review
+export const getReview=async(req,res)=>{
+    try{
+        const {productId}=req.params
+    const product=await Product.findById(productId)
+    if(!product){
+        return res.status(404).send({
+            message:"product not found"
+        })
+    }
+    return res.status(200).send({
+        review:product.reviews,
+        averageRating:product.averageRating,
+        numReviews:product.numReviews
+    })
+    }
+    catch(error){
+        res.status(500).send({
+            message:error.message
+        })
+    }
+}
+// delete review
+export const deleteReview=async(req,res)=>{
+    try{
+        const {productId,reviewId}=req.params
+        const product= await Product.findById(productId)
+        if(!product){
+            return res.status(404).send({
+                message:"product not found"
+            })
+        }
+        const review=await product.reviews.find((review)=>{
+            return review._id.toString()===reviewId
+        })
+        if(!review){
+            return res.send(404).send({
+                message:"review not found"
+            })
+        }
+        if(
+            review.user.toString()!==req.user._id.toString() &&
+            req.user.role !=="admin"
+        ){
+            return res.status(403).send({
+                message:"you are not allowed to delete this review"
+            })
+        }
+        product.reviews=await product.reviews.filter((review)=>{
+            return review._id.toString()!==reviewId
+        })
+        product.calcAverageRating()
+        await product.save()
+        res.status(200).send({
+            message:"review deleted successfully"
+        })
+    }
+    catch(error){
+        res.status(500).send({
+            message:error.message
+        })
+    }
 }

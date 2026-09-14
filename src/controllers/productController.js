@@ -1,3 +1,4 @@
+import cloudinary from "../config/cloudinary.js";
 import Product from "../models/Product.model.js";
 import uploadToCloudinary from "../utilis/upload.js"
 //Get Products
@@ -223,10 +224,67 @@ export const deleteProduct = async (req, res) => {
       message: "Product not found",
     });
   }
-
+  //////delete image from cloudinary
+   await Promise.all(
+    product.images.map(async(image)=>{
+      await cloudinary.uploader.destroy(image.public_id)
+    })
+  )
   await product.deleteOne();
 
   return res.status(200).json({
     message: "Product deleted successfully",
   });
-}; //  Don't forget Delete images from Cloudinary
+};
+///////////////delete image from product
+export const deleteProductImage = async (req, res) => {
+  const {productId}=req.params
+  const product=await Product.findById(productId)
+  if (!product) {
+    return res.status(404).json({
+      message: "Product not found",
+    })
+  }
+ const image= product.images.find((image) => {
+   return image._id.toString()===req.params.imageId
+})
+ if (!image) {
+    return res.status(404).json({
+      message: "image not found",
+    })
+  }
+  await cloudinary.uploader.destroy(image.public_id)
+  product.images = product.images.filter((image) => {
+   return image._id.toString() !== req.params.imageId
+})
+await product.save()
+return res.status(200).send({
+  message:"Image Deleted Successfully"
+})
+}
+///////////// replace image
+export const replaceProductImage=async(req,res)=>{
+  const {productId}=req.params
+  const product=await Product.findById(productId)
+  if(!product){
+   return res.status(404).send({
+      message:"Product Not Found"
+    })
+  }
+  const image=product.images.find((image)=>{
+    return image._id.toString()===req.params.imageId
+  })
+  if(!image){
+    return res.status(404).send({
+      message:"Image Not Found"
+    })
+  }
+  await cloudinary.uploader.destroy(image.public_id )
+  const result = await uploadToCloudinary(req.file.buffer)
+  image.public_id=result.public_id
+  image.url=result.secure_url
+   await product.save()
+   res.status(200).send({
+    message:"Image Successfully Replace"
+   })
+}

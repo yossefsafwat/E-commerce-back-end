@@ -5,14 +5,13 @@ import {validatecreateOrder} from "../middleware/order.middleware.js"
 
 const orderRouter = express.Router()
 
-// orderRouter.use(authentication);
 
-orderRouter.post('/',validatecreateOrder,createOrder)
+orderRouter.post('/', authentication, validatecreateOrder, createOrder)
 
-orderRouter.get('/my', getMyOrders)
+orderRouter.get('/my', authentication, getMyOrders)
 
-orderRouter.get('/my/:id', getOrderById)
+orderRouter.get('/my/:id', authentication, getOrderById)
 
-orderRouter.patch('/my/:id/cancel', cancelOrder)
+orderRouter.patch('/my/:id/cancel', authentication, cancelOrder)
 
 export default orderRouter

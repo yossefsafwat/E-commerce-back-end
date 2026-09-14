@@ -15,6 +15,8 @@ import userRouter from "./routes/user.routes.js";
 import productsRouter from "./routes/product.routes.js"
 import reviewRouter from "./routes/review.routes.js"
 import wishlistRoutes from "./routes/wishlist.routes.js";
+import paymentRouter from "./routes/payment.routes.js";
+import { handleStripeWebhook } from "./controllers/payment.controllers.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -29,10 +31,23 @@ const PORT = process.env.PORT || 3000;
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 app.set("trust proxy", 1);
 
+// CRITICAL: Stripe Webhook requires Raw Buffer BEFORE express.json()
+app.post(
+  "/api/payments/webhook",
+  express.raw({ type: "application/json" }),
+  handleStripeWebhook
+);
+app.post(
+  "/payments/webhook",
+  express.raw({ type: "application/json" }),
+  handleStripeWebhook
+);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+app.use(express.static(path.join(__dirname, "../public")));
 
 app.use("/auth", authRouter);
 app.use("/carts",cartRouter)
@@ -43,6 +58,8 @@ app.use("/admin/users", adminUserRouter);
 app.use("/admin",adminRouter)
 app.use("/wishlists", wishlistRoutes);
 app.use("/users", userRouter);
+app.use("/api/payments", paymentRouter);
+app.use("/payments", paymentRouter);
 
 connectDB();
 

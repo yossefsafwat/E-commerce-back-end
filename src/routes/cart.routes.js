@@ -12,6 +12,8 @@ import {
 
 const cartRouter = express.Router();
 
+cartRouter.use(authentication);
+
 // cartRouter.use(authentication);
 
 cartRouter.route("/").get(getOrCreateCart);

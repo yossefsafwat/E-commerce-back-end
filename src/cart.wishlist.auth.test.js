@@ -64,10 +64,6 @@ describe("Cart & Wishlist Authorization & Data Isolation Tests", () => {
   let tokenB;
 
   beforeAll(async () => {
-    /*
-     * إنشاء مستخدمين تجريبيين.
-     * نستخدم email عشوائي حتى لا يحدث تعارض مع مستخدمين موجودين بالفعل.
-     */
     const uniqueValue = Date.now();
 
     userA = await User.create({
@@ -84,10 +80,6 @@ describe("Cart & Wishlist Authorization & Data Isolation Tests", () => {
       role: "customer",
     });
 
-    /*
-     * إنشاء Token مستقل لكل مستخدم.
-     * نفس البيانات التي يعتمد عليها auth.middleware.js.
-     */
     tokenA = jwt.sign(
       {
         _id: userA._id.toString(),
@@ -112,36 +104,23 @@ describe("Cart & Wishlist Authorization & Data Isolation Tests", () => {
       },
     );
 
-    /*
-     * إنشاء Cart خاص بالمستخدم A.
-     * لا نحتاج لإضافة Products حقيقية؛ سنستخدم items فارغة.
-     */
     await Cart.create({
       user: userA._id,
       items: [],
       coupon: null,
     });
 
-    /*
-     * إنشاء Cart خاص بالمستخدم B.
-     */
     await Cart.create({
       user: userB._id,
       items: [],
       coupon: null,
     });
 
-    /*
-     * إنشاء Wishlist خاص بالمستخدم A.
-     */
     await Wishlist.create({
       user: userA._id,
       products: [],
     });
 
-    /*
-     * إنشاء Wishlist خاص بالمستخدم B.
-     */
     await Wishlist.create({
       user: userB._id,
       products: [],
@@ -149,9 +128,7 @@ describe("Cart & Wishlist Authorization & Data Isolation Tests", () => {
   });
 
   afterAll(async () => {
-    /*
-     * حذف البيانات التجريبية فقط.
-     */
+    
     if (userA?._id) {
       await Cart.deleteOne({ user: userA._id });
       await Wishlist.deleteOne({ user: userA._id });
@@ -207,18 +184,12 @@ describe("Cart & Wishlist Authorization & Data Isolation Tests", () => {
       expect(res.statusCode).toBe(200);
       expect(res.body.success).toBe(true);
 
-      /*
-       * نتأكد أن الـ Cart الذي رجع يخص User A.
-       * نقرأ من قاعدة البيانات للتأكد من وجود Cart المستخدم A.
-       */
+      
       const cartA = await Cart.findOne({ user: userA._id });
 
       expect(cartA).not.toBeNull();
       expect(cartA.user.toString()).toBe(userA._id.toString());
 
-      /*
-       * نتأكد أن Cart المستخدم B مختلف عن Cart المستخدم A.
-       */
       const cartB = await Cart.findOne({ user: userB._id });
 
       expect(cartB).not.toBeNull();

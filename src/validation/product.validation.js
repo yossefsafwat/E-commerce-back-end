@@ -37,6 +37,8 @@ const createProductSchema = Joi.object({
     }
   })
 ),
+featured: Joi.boolean(),
+  isActive: Joi.boolean(),
 
   // tags: Joi.array().items(Joi.string()),
 });
@@ -68,12 +70,16 @@ const updateProductSchema = Joi.object({
     }
   })
 ),
-  // tags: Joi.array().items(Joi.string()),
-
-  deleteImages: Joi.alternatives().try(
+featured: Joi.boolean(),
+  isActive: Joi.boolean(),
+  deletedImages: Joi.alternatives().try(
     Joi.string(),
     Joi.array().items(Joi.string()),
   ),
+  // deleteImages: Joi.alternatives().try(
+  //   Joi.string(),
+  //   Joi.array().items(Joi.string()),
+  // ),
 }).min(1);
 export { createProductSchema, updateProductSchema };
 // import Joi from "joi";

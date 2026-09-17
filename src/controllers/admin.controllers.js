@@ -430,7 +430,10 @@ const updateOrderStatus = async (req, res) => {
 const getAllWishlists = async (req, res) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1);
-    const limit = Math.max(parseInt(req.query.limit) || 10, 1);
+   const limit = Math.min(
+  Math.max(parseInt(req.query.limit) || 10, 1),
+  100
+);
     const skip = (page - 1) * limit;
 
     let [wishlists, total] = await Promise.all([

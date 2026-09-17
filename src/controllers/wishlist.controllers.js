@@ -1,6 +1,7 @@
 import Wishlist from "../models/Wishlist.model.js";
 import Product from "../models/Product.model.js";
 
+
 export const getWishlist = async (req, res) => {
   try {
     let wishlist = await Wishlist.findOne({
@@ -30,6 +31,8 @@ export const getWishlist = async (req, res) => {
 export const addToWishlist = async (req, res) => {
   try {
     const { productId } = req.params;
+
+
 
     const product = await Product.findById(productId);
 
@@ -84,6 +87,7 @@ export const addToWishlist = async (req, res) => {
 export const removeFromWishlist = async (req, res) => {
   try {
     const { productId } = req.params;
+
 
     const wishlist = await Wishlist.findOne({
       user: req.user._id,

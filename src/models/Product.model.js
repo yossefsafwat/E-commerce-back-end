@@ -77,19 +77,18 @@ const productSchema = new mongoose.Schema(
       trim: true,
     },
 
-    images: [
-      {
-        public_id: {
-          type: String,
-          required: true,
+    images: {
+      type: [
+        {
+          public_id: { type: String, required: true },
+          url: { type: String, required: true },
         },
-
-        url: {
-          type: String,
-          required: true,
-        },
+      ],
+      validate: {
+        validator: (images) => images.length >= 1,
+        message: "Product must have at least one image",
       },
-    ],
+    },
 
     category: {
       type: String,
@@ -160,7 +159,6 @@ productSchema.pre("save", function () {
   }
 });
 
-
 productSchema.methods.calcAverageRating = function () {
   if (this.reviews.length === 0) {
     this.averageRating = 0;
@@ -178,6 +176,8 @@ productSchema.index({
   name: "text",
   description: "text",
   brand: "text",
+  subcategory: "text",
+  tags: "text",
 });
 productSchema.index({ category: 1 });
 productSchema.index({ brand: 1 });

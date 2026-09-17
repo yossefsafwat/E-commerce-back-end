@@ -7,7 +7,9 @@ const productIdValidation = Joi.object({
     .messages({
       "string.pattern.base": "invalid product id",
       "any.required": "product id is required",
+      "string.empty": "product id cannot be empty",
     }),
 });
+
 
 export { productIdValidation };

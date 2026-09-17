@@ -21,9 +21,9 @@ const wishlistSchema = new mongoose.Schema(
   },
 );
 
-wishlistSchema.pre(/^find/, function () {
-  this.populate("products");
-});
+// wishlistSchema.pre(/^find/, function () {
+//   this.populate("products");
+// });
 
 const Wishlist = mongoose.model("Wishlist", wishlistSchema);
 

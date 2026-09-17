@@ -1,7 +1,7 @@
 import User from "../models/User.model.js";
 import {
   adminAddUserSchema,
-  adminUpdateUserSchema,
+  // adminUpdateUserSchema,
 } from "../validation/admin.user.validation.js";
 
 // Admin add User
@@ -124,73 +124,73 @@ const adminGetUserById = async (req, res) => {
 };
 
 // Admin update User
-const adminUpdateUser = async (req, res) => {
-  try {
-    const { error, value } = adminUpdateUserSchema.validate(req.body);
+// const adminUpdateUser = async (req, res) => {
+//   try {
+//     const { error, value } = adminUpdateUserSchema.validate(req.body);
 
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: "Validation failed",
-        errors: error.details.map((err) => ({
-          field: err.context.key,
-          message: err.message,
-        })),
-      });
-    }
+//     if (error) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Validation failed",
+//         errors: error.details.map((err) => ({
+//           field: err.context.key,
+//           message: err.message,
+//         })),
+//       });
+//     }
 
-    const { id } = req.params;
+//     const { id } = req.params;
 
-    const user = await User.findById(id);
+//     const user = await User.findById(id);
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
+//     if (!user) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "User not found",
+//       });
+//     }
 
-    if (value.email) {
-      const existingUser = await User.findOne({
-        email: value.email.toLowerCase(),
-        _id: { $ne: id },
-      });
+//     if (value.email) {
+//       const existingUser = await User.findOne({
+//         email: value.email.toLowerCase(),
+//         _id: { $ne: id },
+//       });
 
-      if (existingUser) {
-        return res.status(400).json({
-          success: false,
-          message: "Email is already in use by another user",
-        });
-      }
+//       if (existingUser) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "Email is already in use by another user",
+//         });
+//       }
 
-      value.email = value.email.toLowerCase();
-    }
+//       value.email = value.email.toLowerCase();
+//     }
 
-    Object.assign(user, value);
+//     Object.assign(user, value);
 
-    await user.save();
+//     await user.save();
 
-    return res.status(200).json({
-      success: true,
-      message: "User updated successfully",
-      user: {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        phone: user.phone,
-        avatar: user.avatar,
-        role: user.role,
-        isVerified: user.isVerified,
-        addresses: user.addresses,
-      },
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: `Failed to update user: ${error.message}`,
-    });
-  }
-};
+//     return res.status(200).json({
+//       success: true,
+//       message: "User updated successfully",
+//       user: {
+//         _id: user._id,
+//         username: user.username,
+//         email: user.email,
+//         phone: user.phone,
+//         avatar: user.avatar,
+//         role: user.role,
+//         isVerified: user.isVerified,
+//         addresses: user.addresses,
+//       },
+//     });
+//   } catch (error) {
+//     return res.status(500).json({
+//       success: false,
+//       message: `Failed to update user: ${error.message}`,
+//     });
+//   }
+// };
 
 // Admin delete User
 const adminDeleteUser = async (req, res) => {
@@ -231,6 +231,6 @@ export {
   adminAddUser,
   adminGetAllUsers,
   adminGetUserById,
-  adminUpdateUser,
+  // adminUpdateUser,
   adminDeleteUser,
 };

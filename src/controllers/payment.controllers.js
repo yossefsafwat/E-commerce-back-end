@@ -5,7 +5,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createPaymentIntent = async (req, res) => {
   try {
-    const orderId = req.params.orderId || req.body.orderId;
+    const orderId = req.params.orderId
 
     if (!orderId) {
       return res.status(400).json({
@@ -14,7 +14,6 @@ export const createPaymentIntent = async (req, res) => {
       });
     }
 
-    // 1. Find Order in database
     const order = await Order.findById(orderId);
 
     if (!order) {
@@ -24,19 +23,23 @@ export const createPaymentIntent = async (req, res) => {
       });
     }
 
-    // Verify that the order belongs to the authenticated user (with temporary test fallback)
-    const fallbackUserId = '65f1a2b3c4d5e6f7a8b9c0a1';
-    const orderUserId = (order.user?._id || order.user).toString();
-    const authUserId = req.user ? (req.user._id || req.user).toString() : fallbackUserId;
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'You must login first.',
+      });
+    }
 
-    if (req.user && orderUserId !== authUserId) {
+    const authUserId = (req.user._id || req.user).toString();
+    const orderUserId = (order.user?._id || order.user).toString();
+
+    if (orderUserId !== authUserId) {
       return res.status(403).json({
         success: false,
         message: 'Unauthorized access: Order does not belong to the logged-in user.',
       });
     }
 
-    // Check if order is already paid
     if (order.paymentStatus === 'paid') {
       return res.status(400).json({
         success: false,
@@ -44,10 +47,8 @@ export const createPaymentIntent = async (req, res) => {
       });
     }
 
-    // 2. Convert total price to smallest currency unit (Cents)
     const amount = Math.round(order.totalPrice * 100);
 
-    // 3. Create Stripe PaymentIntent with orderId and userId in metadata
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency: 'usd',
@@ -58,12 +59,10 @@ export const createPaymentIntent = async (req, res) => {
       },
     });
 
-    // 4. Save paymentIntent.id inside transactionId and update paymentMethod
     order.transactionId = paymentIntent.id;
     order.paymentMethod = 'stripe';
     await order.save();
 
-    // 5. Return clientSecret and transactionId in response
     return res.status(200).json({
       success: true,
       clientSecret: paymentIntent.client_secret,
@@ -80,7 +79,7 @@ export const createPaymentIntent = async (req, res) => {
 
 export const createCheckoutSession = async (req, res) => {
   try {
-    const orderId = req.params.orderId || req.body.orderId;
+    const orderId = req.params.orderId
 
     if (!orderId) {
       return res.status(400).json({
@@ -105,23 +104,27 @@ export const createCheckoutSession = async (req, res) => {
       });
     }
 
-    const fallbackUserId = '65f1a2b3c4d5e6f7a8b9c0a1';
-    const orderUserId = (order.user?._id || order.user).toString();
-    const authUserId = req.user ? (req.user._id || req.user).toString() : fallbackUserId;
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'You must login first.',
+      });
+    }
 
-    if (req.user && orderUserId !== authUserId) {
+    const authUserId = (req.user._id || req.user).toString();
+    const orderUserId = (order.user?._id || order.user).toString();
+
+    if (orderUserId !== authUserId) {
       return res.status(403).json({
         success: false,
         message: 'Unauthorized access: Order does not belong to the logged-in user.',
       });
     }
 
-    // Dynamic frontend URLs support (React/Next.js/Mobile or fallback to server default)
     const clientBaseUrl = process.env.CLIENT_URL || `${req.protocol}://${req.get('host')}`;
     const successUrl = req.body.successUrl || `${clientBaseUrl}/checkout-success.html?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = req.body.cancelUrl || `${clientBaseUrl}/checkout-cancel.html`;
 
-    // Create Stripe Hosted Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -192,7 +195,6 @@ export const handleStripeWebhook = async (req, res) => {
   }
 
   try {
-    // Handle specific webhook events
     switch (event.type) {
       case 'checkout.session.completed':
       case 'payment_intent.succeeded': {

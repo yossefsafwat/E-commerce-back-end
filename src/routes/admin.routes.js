@@ -9,7 +9,8 @@ import {
   getWishlistStats,
 } from "../controllers/admin.controllers.js";
 import { authentication, restrictTo } from "../middleware/auth.middleware.js";
-import { validateUpdateOrderStatus } from "../middleware/order.middleware.js";
+import {updateOrderStatusValidation} from "../validation/order.validation.js"
+import { validate } from "../middleware/validationMiddleware.js";
 const adminRouter = express.Router();
 
 adminRouter.use(authentication);
@@ -27,6 +28,6 @@ adminRouter.get("/wishlists/stats", getWishlistStats);
 
 adminRouter.get("/:id", getSingleOrder);
 
-adminRouter.patch("/:id/status", validateUpdateOrderStatus, updateOrderStatus);
+adminRouter.patch("/:id/status",validate(updateOrderStatusValidation), updateOrderStatus);
 
 export default adminRouter;

@@ -11,7 +11,7 @@ const createOrder = async (req, res) => {
 
   try {
     const { shippingAddress, paymentMethod, customerNote } = req.body
-    const userId = req.user?._id || '64b8f1a2e4b0a1a2b3c4d003'
+    const userId = req.user?._id
 
     const cart = await Cart.findOne({ user: userId }).session(session)
     if (!cart || cart.items.length === 0) {
@@ -126,7 +126,7 @@ const createOrder = async (req, res) => {
 
 const getMyOrders = async (req, res) => {
   try {
-    const userId = req.user?._id || '64b8f1a2e4b0a1a2b3c4d003'
+    const userId = req.user?._id 
     const page = parseInt(req.query.page, 10) || 1
     const limit = parseInt(req.query.limit, 10) || 10
     const skip = (page - 1) * limit
@@ -156,7 +156,7 @@ const getMyOrders = async (req, res) => {
 const getOrderById = async (req, res) => {
   try {
     const { id } = req.params
-    const userId = req.user?._id || '64b8f1a2e4b0a1a2b3c4d002'
+    const userId = req.user?._id 
 
     const order = await Order.findOne({ _id: id, user: userId })
     if (!order) {
@@ -175,7 +175,7 @@ const cancelOrder = async (req, res) => {
 
   try {
     const { id } = req.params
-    const userId = req.user?._id || '64b8f1a2e4b0a1a2b3c4d002'
+    const userId = req.user?._id 
 
     const order = await Order.findOne({ _id: id, user: userId }).session(session)
     if (!order) {

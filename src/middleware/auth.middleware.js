@@ -9,7 +9,6 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 const authentication = async (req, res, next) => {
-
   const authHeader = req.header("Authorization");
   if (!authHeader)
     return res.status(401).json({

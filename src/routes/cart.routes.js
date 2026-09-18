@@ -10,10 +10,11 @@ import {
   clearCart
 } from "../controllers/cart.controllers.js";
 import {
- validateAddItemToCart,
-  validateUpdateItemQuantity,
-  validateApplyCoupon,
-} from "../middleware/cart.validation.js";
+  addItemToCartValidation,
+  updateItemQuantityValidation,
+  applyCouponValidation
+} from "../validation/cart.validation.js";
+import { validate } from "../middleware/validationMiddleware.js";
 
 const cartRouter = express.Router();
 
@@ -21,13 +22,13 @@ cartRouter.use(authentication);
 
 cartRouter.route("/").get(getOrCreateCart);
 
-cartRouter.route("/items").post(validateAddItemToCart, addItemToCart);
+cartRouter.route("/items").post(validate(addItemToCartValidation), addItemToCart);
 
-cartRouter.route("/items").patch(validateUpdateItemQuantity, updateCartItemQuantity);
+cartRouter.route("/items").patch(validate(updateItemQuantityValidation), updateCartItemQuantity);
 
 cartRouter.route("/items/:productId").delete(removeItemFromCart);
 
-cartRouter.route("/coupon").post(validateApplyCoupon,applyCoupon);
+cartRouter.route("/coupon").post(validate(applyCouponValidation),applyCoupon);
 
 cartRouter.route("/coupon").delete(removeCoupon);
 

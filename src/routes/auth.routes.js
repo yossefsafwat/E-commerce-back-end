@@ -1,6 +1,13 @@
 import express from "express";
-import { authentication ,restrictTo} from "../middleware/auth.middleware.js";
-
+import { authentication} from "../middleware/auth.middleware.js";
+import {validate} from "../middleware/validationMiddleware.js"
+import {
+  sendOTPRegisterValidation,
+  verifyOTPRegisterValidation,
+  sendOTPForgetPassValidation,
+  verifyOTPForgetPassValidation,
+} from "../validation/otp.validation.js";
+import { loginValidation } from "../validation/auth.validation.js";
 import {
   register,
   login,
@@ -11,29 +18,17 @@ import {
   verifyRegisterOTP,
 } from "../controllers/auth.controllers.js";
 
-import {
-  sendOTPRegister,
-  verfiylogin,
-  sendOTPForgetPass,
-  verifyOTPForgetPass,
-  verifyOTPRegister,
-} from "../middleware/auth.validation.js";
-
 const authRouter = express.Router();
 
-authRouter.route("/register/send-otp").post(sendOTPRegister, register);
-authRouter.route("/verify-otp").post(verifyOTPRegister, verifyRegisterOTP);
-authRouter.post("/forgot-password/send-otp",sendOTPForgetPass, sendOTPForgetPassword);
-authRouter.post("/forgot-password/verify-otp", verifyOTPForgetPass, verifyOTPForgetPassword);
-
-authRouter.route("/login").post(verfiylogin, login);
+authRouter.route("/register/send-otp").post(validate(sendOTPRegisterValidation), register);
+authRouter.route("/verify-otp").post(validate(verifyOTPRegisterValidation), verifyRegisterOTP);
+authRouter.post("/forgot-password/send-otp",validate(sendOTPForgetPassValidation), sendOTPForgetPassword);
+authRouter.post("/forgot-password/verify-otp", validate(verifyOTPForgetPassValidation), verifyOTPForgetPassword);
+authRouter.route("/login").post(validate(loginValidation), login);
 
 authRouter.use(authentication);
 
 authRouter.route("/logout").post(logout);
 authRouter.route("/me").get(profile);
-// authRouter.put("/me", updateProfile);
-// authRouter.put("/me/change-password", validateChangePassword, changePassword);
-
 
 export default authRouter;

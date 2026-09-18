@@ -1,4 +1,4 @@
-export const ProductFilter = (query) => {
+const ProductFilter = (query) => {
   const filter = {
     isActive: true,
   };
@@ -39,8 +39,8 @@ export const ProductFilter = (query) => {
 
   return filter;
 };
-///////////////////////////////////////////////////
-export const ProductSort = (sort) => {
+
+const ProductSort = (sort) => {
   let sortOption = {};
 
   if (sort === "price_asc") {
@@ -65,15 +65,11 @@ export const ProductSort = (sort) => {
 
   return sortOption;
 };
-////////////////////////////////////////////////////////////
 
-export const Pagination = (query, totalProducts) => {
+const Pagination = (query, totalProducts) => {
   const page = Math.max(Number(query.page) || 1, 1);
 
-  const limit = Math.min(
-    Math.max(Number(query.limit) || 10, 1),
-    100
-  );
+  const limit = Math.min(Math.max(Number(query.limit) || 10, 1), 100);
 
   const skip = (page - 1) * limit;
 
@@ -86,3 +82,5 @@ export const Pagination = (query, totalProducts) => {
     totalPages,
   };
 };
+
+export { ProductFilter, ProductSort, Pagination };

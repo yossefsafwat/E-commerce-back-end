@@ -470,7 +470,7 @@ const getAllWishlists = async (req, res) => {
   }
 };
 
-const getWishlistStats = async (req, res, next) => {
+const getWishlistStats = async (req, res) => {
   try {
     const totalWishlists = await Wishlist.countDocuments();
 

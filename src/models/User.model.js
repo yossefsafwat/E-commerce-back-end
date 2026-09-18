@@ -64,7 +64,10 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "customer"],
       default: "customer",
     },
-    addresses: [addressSchema],
+    addresses:{
+      type:[addressSchema],
+       default:[]
+    }, 
     wishlist: [
       {
         type: mongoose.Schema.Types.ObjectId,

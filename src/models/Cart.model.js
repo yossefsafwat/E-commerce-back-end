@@ -117,7 +117,7 @@ CartSchema.virtual("discountAmount").get(function () {
   if (discountType === "percentage") {
     return (subtotal * discountValue) / 100;
   } else if (discountType === "fixed") {
-    return Math.min(discountValue, subtotal); // Can't discount more than subtotal
+    return Math.min(discountValue, subtotal); 
   } else {
     return 0;
   }

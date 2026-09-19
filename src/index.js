@@ -16,6 +16,7 @@ import productsRouter from "./routes/product.routes.js";
 import wishlistRoutes from "./routes/wishlist.routes.js";
 import paymentRouter from "./routes/payment.routes.js";
 import { handleStripeWebhook } from "./controllers/payment.controllers.js";
+import setupSwagger from "./docs/swagger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,6 +24,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, ".env") });
 
 const app = express();
+setupSwagger(app);
 
 const PORT = process.env.PORT || 3000;
 

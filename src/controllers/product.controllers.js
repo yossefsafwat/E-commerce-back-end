@@ -202,11 +202,16 @@ const updateProduct = async (req, res) => {
       });
     }
 
+    // const imagesToDelete = deletedImages
+    //   ? Array.isArray(deletedImages)
+    //     ? deletedImages
+    //     : [deletedImages]
+    //   : [];
     const imagesToDelete = deletedImages
-      ? Array.isArray(deletedImages)
-        ? deletedImages
-        : [deletedImages]
-      : [];
+  ? Array.isArray(deletedImages)
+    ? deletedImages
+    : deletedImages.split(",").map((id) => id.trim())
+  : [];
 
     const notFoundImages = imagesToDelete.filter(
       (publicId) =>

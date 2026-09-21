@@ -1108,6 +1108,7 @@ const swaggerDefinition = {
                   "price",
                   "stock",
                   "category",
+                  "image",
                 ],
                 properties: {
                   name: { type: "string", maxLength: 200 },
@@ -1120,10 +1121,15 @@ const swaggerDefinition = {
                   category: { type: "string" },
                   subcategory: { type: "string" },
                   brand: { type: "string" },
-                  tags: { type: "string", description: "JSON array string" },
+                 tags: {
+  type: "string",
+  description:
+    'Optional. Enter tags as an escaped JSON array string, e.g. "[\\"electronics\\", \\"mobile\\", \\"samsung\\"]"',
+  example: '"[\\"electronics\\", \\"mobile\\", \\"samsung\\"]"',
+},
                   featured: { type: "boolean" },
                   isActive: { type: "boolean" },
-                  images: {
+                  image: {
                     type: "array",
                     items: { type: "string", format: "binary" },
                     description: "Product images (at least 1 required)",
@@ -1339,15 +1345,32 @@ const swaggerDefinition = {
                   category: { type: "string" },
                   subcategory: { type: "string" },
                   brand: { type: "string" },
-                  tags: { type: "string", description: "JSON array string" },
+                  tags: {
+  type: "string",
+  description:
+    'Optional. Enter tags as an escaped JSON array string, e.g. "[\\"electronics\\", \\"mobile\\", \\"samsung\\"]"',
+  example: '"[\\"electronics\\", \\"mobile\\", \\"samsung\\"]"',
+},
                   featured: { type: "boolean" },
                   isActive: { type: "boolean" },
+                  // deletedImages: {
+                  //   type: "string",
+                  //   description:
+                  //     "Public ID(s) of images to remove from Cloudinary",
+                  // },
                   deletedImages: {
-                    type: "string",
-                    description:
-                      "Public ID(s) of images to remove from Cloudinary",
-                  },
-                  images: {
+  type: "array",
+  items: {
+    type: "string",
+  },
+  description: "Public IDs of images to remove from Cloudinary",
+  example: [
+    "products/image1",
+    "products/image2",
+  ],
+},
+                  
+                  image: {
                     type: "array",
                     items: { type: "string", format: "binary" },
                     description: "New images to add",
